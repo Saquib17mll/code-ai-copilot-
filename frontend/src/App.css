@@ -251,3 +251,284 @@ body {
   padding: 0.5rem;
   border-radius: 4px;
 }
+
+/* ===== Navigation tabs ===== */
+.app-nav {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.nav-tab {
+  background: transparent;
+  color: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  padding: 0.35rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: background 0.15s;
+}
+
+.nav-tab:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+}
+
+.nav-tab.active {
+  background: white;
+  color: #1976d2;
+}
+
+/* ===== Pomodoro wrapper & themes ===== */
+.pomodoro-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 2rem 1rem;
+}
+
+/* Light theme (default) */
+.pomodoro-theme-light .pomodoro-card {
+  background: white;
+  color: #333;
+}
+
+.pomodoro-theme-light .clock-track {
+  stroke: #e0e0e0;
+}
+
+.pomodoro-theme-light .clock-progress {
+  stroke: #1976d2;
+}
+
+/* Dark theme */
+.pomodoro-theme-dark .pomodoro-card {
+  background: #1e1e2e;
+  color: #cdd6f4;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+}
+
+.pomodoro-theme-dark .clock-track {
+  stroke: #313244;
+}
+
+.pomodoro-theme-dark .clock-progress {
+  stroke: #89b4fa;
+}
+
+.pomodoro-theme-dark .pomodoro-settings {
+  background: #181825;
+  border-top-color: #313244;
+}
+
+.pomodoro-theme-dark .settings-label {
+  color: #a6adc8;
+}
+
+.pomodoro-theme-dark .preset-btn {
+  background: #313244;
+  color: #cdd6f4;
+  border-color: #45475a;
+}
+
+.pomodoro-theme-dark .preset-btn:hover {
+  background: #45475a;
+}
+
+.pomodoro-theme-dark .preset-btn.active {
+  background: #89b4fa;
+  color: #1e1e2e;
+  border-color: #89b4fa;
+}
+
+.pomodoro-theme-dark .toggle-label {
+  color: #cdd6f4;
+}
+
+.pomodoro-theme-dark .summary-badge {
+  background: #313244;
+  color: #89b4fa;
+}
+
+/* Focus theme (minimal / low-distraction) */
+.pomodoro-theme-focus .pomodoro-card {
+  background: #fafafa;
+  color: #444;
+  box-shadow: none;
+  border: 1px solid #e0e0e0;
+}
+
+.pomodoro-theme-focus .clock-track {
+  stroke: #f0f0f0;
+}
+
+.pomodoro-theme-focus .clock-progress {
+  stroke: #555;
+}
+
+.pomodoro-theme-focus .pomodoro-title {
+  font-size: 1rem;
+  color: #777;
+}
+
+.pomodoro-theme-focus .summary-badge {
+  background: #f0f0f0;
+  color: #666;
+}
+
+/* ===== Pomodoro card ===== */
+.pomodoro-card {
+  width: 100%;
+  max-width: 380px;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+}
+
+.pomodoro-title {
+  text-align: center;
+  font-size: 1.3rem;
+  font-weight: 600;
+  padding: 1.25rem 1.5rem 0;
+}
+
+/* ===== Compact settings summary ===== */
+.pomodoro-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  justify-content: center;
+  padding: 0.6rem 1rem 0;
+}
+
+.summary-badge {
+  font-size: 0.75rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 20px;
+  background: #e3f2fd;
+  color: #1565c0;
+  font-weight: 500;
+}
+
+/* ===== Circular clock ===== */
+.pomodoro-clock {
+  position: relative;
+  width: 160px;
+  height: 160px;
+  margin: 1.25rem auto 0.5rem;
+}
+
+.pomodoro-svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.clock-track {
+  fill: none;
+  stroke-width: 8;
+}
+
+.clock-progress {
+  fill: none;
+  stroke-width: 8;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.9s linear;
+}
+
+.pomodoro-time {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ===== Controls ===== */
+.pomodoro-controls {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem 1rem;
+}
+
+.pomodoro-btn {
+  min-width: 72px;
+}
+
+/* ===== Settings panel ===== */
+.pomodoro-settings {
+  border-top: 1px solid #e0e0e0;
+  padding: 1rem 1.25rem 1.25rem;
+  background: #fafafa;
+}
+
+.settings-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.settings-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 0.85rem;
+}
+
+.settings-label {
+  min-width: 64px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #555;
+  padding-top: 0.3rem;
+}
+
+.preset-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.preset-btn {
+  padding: 0.3rem 0.65rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: white;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background 0.12s;
+}
+
+.preset-btn:hover {
+  background: #e3f2fd;
+}
+
+.preset-btn.active {
+  background: #1976d2;
+  color: white;
+  border-color: #1976d2;
+}
+
+.toggle-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.settings-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
