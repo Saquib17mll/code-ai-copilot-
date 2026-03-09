@@ -223,12 +223,13 @@ function PomodoroTimer() {
               strokeDasharray={CIRCUMFERENCE}
               strokeDashoffset={dashOffset}
               transform="rotate(-90 60 60)"
-              style={{ transition: 'stroke-dashoffset 0.9s linear, stroke 0.5s ease' }}
+              style={{ transition: 'stroke-dashoffset 1s linear, stroke 0.5s ease' }}
             />
           </svg>
 
-          {/* Numeric display — always visible */}
-          <div className="pomodoro-time-display" aria-live="off">
+          {/* Numeric time — aria-live is intentionally off to avoid announcing every tick;
+               the SVG aria-label above provides accessible state when focused. */}
+          <div className="pomodoro-time-display">
             <span className="pomodoro-time" style={{ color: timerColor }}>
               {formatTime(secondsLeft)}
             </span>

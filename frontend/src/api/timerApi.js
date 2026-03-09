@@ -1,5 +1,12 @@
 const BASE_URL = '/api/timer';
 
+/**
+ * Start a new timer session.
+ * @param {object} params
+ * @param {number|null} [params.employee_id] - Optional employee to associate the session with.
+ * @param {number} params.duration_minutes - Session length (positive integer).
+ * @param {string} params.started_at - ISO 8601 start timestamp.
+ */
 export async function startTimerSession({ employee_id, duration_minutes, started_at }) {
   const res = await fetch(`${BASE_URL}/sessions/start`, {
     method: 'POST',
