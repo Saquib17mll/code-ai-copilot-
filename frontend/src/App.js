@@ -2,10 +2,12 @@ import React, { useState, useEffect, useCallback } from 'react';
 import EmployeeTable from './components/EmployeeTable';
 import EmployeeForm from './components/EmployeeForm';
 import DepartmentFilter from './components/DepartmentFilter';
+import PomodoroTimer from './components/PomodoroTimer';
 import { getEmployees, createEmployee, updateEmployee, deleteEmployee } from './api/employeeApi';
 import './App.css';
 
 function App() {
+  const [activeTab, setActiveTab] = useState('employees');
   const [employees, setEmployees] = useState([]);
   const [allEmployees, setAllEmployees] = useState([]);
   const [selectedDepartment, setSelectedDepartment] = useState('');
@@ -85,22 +87,41 @@ function App() {
     <div className="app">
       <header className="app-header">
         <h1>Employee Management System</h1>
+        <nav className="app-nav">
+          <button
+            className={`nav-tab${activeTab === 'employees' ? ' active' : ''}`}
+            onClick={() => setActiveTab('employees')}
+          >
+            Employees
+          </button>
+          <button
+            className={`nav-tab${activeTab === 'pomodoro' ? ' active' : ''}`}
+            onClick={() => setActiveTab('pomodoro')}
+          >
+            Pomodoro
+          </button>
+        </nav>
       </header>
       <main className="app-main">
-        {error && <div className="alert-error">{error}</div>}
-        <div className="toolbar">
-          <DepartmentFilter
-            employees={allEmployees}
-            selectedDepartment={selectedDepartment}
-            onChange={handleDepartmentChange}
-          />
-          <button className="btn-primary" onClick={handleAdd}>+ Add Employee</button>
-        </div>
-        {loading ? (
-          <p className="loading">Loading employees...</p>
-        ) : (
-          <EmployeeTable employees={employees} onEdit={handleEdit} onDelete={handleDelete} />
+        {activeTab === 'employees' && (
+          <>
+            {error && <div className="alert-error">{error}</div>}
+            <div className="toolbar">
+              <DepartmentFilter
+                employees={allEmployees}
+                selectedDepartment={selectedDepartment}
+                onChange={handleDepartmentChange}
+              />
+              <button className="btn-primary" onClick={handleAdd}>+ Add Employee</button>
+            </div>
+            {loading ? (
+              <p className="loading">Loading employees...</p>
+            ) : (
+              <EmployeeTable employees={employees} onEdit={handleEdit} onDelete={handleDelete} />
+            )}
+          </>
         )}
+        {activeTab === 'pomodoro' && <PomodoroTimer />}
       </main>
       {showForm && (
         <EmployeeForm
