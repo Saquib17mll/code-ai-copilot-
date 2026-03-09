@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { getTimerPreferences, updateTimerPreferences } from '../api/timerApi';
+import { getTimerPreferences, updateTimerPreferences, completeSession, getTimerProfile, getTimerAchievements, getTimerStats } from '../api/timerApi';
+import GamificationPanel from './GamificationPanel';
+import AchievementsPanel from './AchievementsPanel';
+import StatisticsPanel from './StatisticsPanel';
 
 const DURATION_PRESETS = [15, 25, 35, 45];
 const THEME_OPTIONS = ['light', 'dark', 'focus'];
@@ -59,6 +62,39 @@ export default function PomodoroTimer() {
   const intervalRef = useRef(null);
   const prevDurationRef = useRef(prefs.default_duration);
 
+  // Gamification state
+  const [profile, setProfile] = useState(null);
+  const [profileLoading, setProfileLoading] = useState(true);
+  const [profileError, setProfileError] = useState('');
+  const [achievements, setAchievements] = useState(null);
+  const [achievementsLoading, setAchievementsLoading] = useState(true);
+  const [achievementsError, setAchievementsError] = useState('');
+  const [weeklyStats, setWeeklyStats] = useState(null);
+  const [monthlyStats, setMonthlyStats] = useState(null);
+  const [statsLoading, setStatsLoading] = useState(true);
+  const [statsError, setStatsError] = useState('');
+  const [feedback, setFeedback] = useState(null); // { type: 'level'|'achievement', message }
+
+  const refreshGamification = useCallback(() => {
+    setProfileLoading(true);
+    getTimerProfile()
+      .then(setProfile)
+      .catch(() => setProfileError('unavailable'))
+      .finally(() => setProfileLoading(false));
+
+    setAchievementsLoading(true);
+    getTimerAchievements()
+      .then(setAchievements)
+      .catch(() => setAchievementsError('unavailable'))
+      .finally(() => setAchievementsLoading(false));
+
+    setStatsLoading(true);
+    Promise.all([getTimerStats('weekly'), getTimerStats('monthly')])
+      .then(([w, m]) => { setWeeklyStats(w); setMonthlyStats(m); })
+      .catch(() => setStatsError('unavailable'))
+      .finally(() => setStatsLoading(false));
+  }, []);
+
   // Load preferences from backend on mount
   useEffect(() => {
     getTimerPreferences()
@@ -73,6 +109,11 @@ export default function PomodoroTimer() {
         // Fall back to localStorage / defaults already loaded
       });
   }, []);
+
+  // Load gamification data on mount
+  useEffect(() => {
+    refreshGamification();
+  }, [refreshGamification]);
 
   // Apply theme to body
   useEffect(() => {
@@ -96,12 +137,26 @@ export default function PomodoroTimer() {
         clearInterval(intervalRef.current);
         setRunning(false);
         if (prefs.sound_end) playBeep(523, 500, 0.5);
+        // Record session completion
+        completeSession({ duration_minutes: prefs.default_duration })
+          .then((result) => {
+            refreshGamification();
+            if (result.leveled_up) {
+              setFeedback({ type: 'level', message: `Level up! You reached Level ${result.level}! 🎉` });
+            } else if (result.newly_unlocked_achievements && result.newly_unlocked_achievements.length > 0) {
+              setFeedback({ type: 'achievement', message: `Achievement unlocked! 🏆` });
+            }
+            setTimeout(() => setFeedback(null), 4000);
+          })
+          .catch(() => {
+            // Gamification failure is non-blocking
+          });
         return 0;
       }
       if (prefs.sound_tick) playBeep(880, 50, 0.1);
       return prev - 1;
     });
-  }, [prefs.sound_end, prefs.sound_tick]);
+  }, [prefs.sound_end, prefs.sound_tick, prefs.default_duration, refreshGamification]);
 
   useEffect(() => {
     if (running) {
@@ -158,130 +213,151 @@ export default function PomodoroTimer() {
 
   return (
     <div className={`pomodoro-wrapper pomodoro-theme-${prefs.theme}`}>
-      <div className="pomodoro-card">
-        <h2 className="pomodoro-title">Pomodoro Timer</h2>
+      <div className="pomodoro-layout">
+        <div className="pomodoro-card">
+          <h2 className="pomodoro-title">Pomodoro Timer</h2>
 
-        {/* Compact settings summary */}
-        <div className="pomodoro-summary">
-          <span className="summary-badge">{prefs.default_duration} min</span>
-          <span className="summary-badge">{prefs.theme}</span>
-          {prefs.sound_start && <span className="summary-badge">▶ sound</span>}
-          {prefs.sound_end && <span className="summary-badge">⏹ sound</span>}
-          {prefs.sound_tick && <span className="summary-badge">🕐 tick</span>}
-        </div>
-
-        {/* Circular timer */}
-        <div className="pomodoro-clock">
-          <svg viewBox="0 0 120 120" className="pomodoro-svg">
-            <circle cx="60" cy="60" r="54" className="clock-track" />
-            <circle
-              cx="60"
-              cy="60"
-              r="54"
-              className="clock-progress"
-              strokeDasharray={circumference}
-              strokeDashoffset={circumference * (1 - progress)}
-            />
-          </svg>
-          <div className="pomodoro-time">{formatTime(timeLeft)}</div>
-        </div>
-
-        {/* Controls */}
-        <div className="pomodoro-controls">
-          {!running ? (
-            <button className="btn-primary pomodoro-btn" onClick={handleStart} disabled={timeLeft === 0}>
-              Start
-            </button>
-          ) : (
-            <button className="btn-secondary pomodoro-btn" onClick={handlePause}>
-              Pause
-            </button>
+          {/* Feedback toast */}
+          {feedback && (
+            <div className={`feedback-toast feedback-toast--${feedback.type}`}>
+              {feedback.message}
+            </div>
           )}
-          <button className="btn-secondary pomodoro-btn" onClick={handleReset}>
-            Reset
-          </button>
-          <button className="btn-secondary pomodoro-btn" onClick={() => setSettingsOpen((v) => !v)}>
-            ⚙ Settings
-          </button>
+
+          {/* Compact settings summary */}
+          <div className="pomodoro-summary">
+            <span className="summary-badge">{prefs.default_duration} min</span>
+            <span className="summary-badge">{prefs.theme}</span>
+            {prefs.sound_start && <span className="summary-badge">▶ sound</span>}
+            {prefs.sound_end && <span className="summary-badge">⏹ sound</span>}
+            {prefs.sound_tick && <span className="summary-badge">🕐 tick</span>}
+          </div>
+
+          {/* Circular timer */}
+          <div className="pomodoro-clock">
+            <svg viewBox="0 0 120 120" className="pomodoro-svg">
+              <circle cx="60" cy="60" r="54" className="clock-track" />
+              <circle
+                cx="60"
+                cy="60"
+                r="54"
+                className="clock-progress"
+                strokeDasharray={circumference}
+                strokeDashoffset={circumference * (1 - progress)}
+              />
+            </svg>
+            <div className="pomodoro-time">{formatTime(timeLeft)}</div>
+          </div>
+
+          {/* Controls */}
+          <div className="pomodoro-controls">
+            {!running ? (
+              <button className="btn-primary pomodoro-btn" onClick={handleStart} disabled={timeLeft === 0}>
+                Start
+              </button>
+            ) : (
+              <button className="btn-secondary pomodoro-btn" onClick={handlePause}>
+                Pause
+              </button>
+            )}
+            <button className="btn-secondary pomodoro-btn" onClick={handleReset}>
+              Reset
+            </button>
+            <button className="btn-secondary pomodoro-btn" onClick={() => setSettingsOpen((v) => !v)}>
+              ⚙ Settings
+            </button>
+          </div>
+
+          {/* Settings panel */}
+          {settingsOpen && (
+            <div className="pomodoro-settings">
+              <h3 className="settings-title">Settings</h3>
+
+              <div className="settings-row">
+                <label className="settings-label">Duration</label>
+                <div className="preset-group">
+                  {DURATION_PRESETS.map((d) => (
+                    <button
+                      key={d}
+                      className={`preset-btn${prefs.default_duration === d ? ' active' : ''}`}
+                      onClick={() => handlePrefsChange({ default_duration: d })}
+                    >
+                      {d}m
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="settings-row">
+                <label className="settings-label">Theme</label>
+                <div className="preset-group">
+                  {THEME_OPTIONS.map((t) => (
+                    <button
+                      key={t}
+                      className={`preset-btn${prefs.theme === t ? ' active' : ''}`}
+                      onClick={() => handlePrefsChange({ theme: t })}
+                    >
+                      {t.charAt(0).toUpperCase() + t.slice(1)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="settings-row">
+                <label className="settings-label">Sounds</label>
+                <div className="toggle-group">
+                  <label className="toggle-label">
+                    <input
+                      type="checkbox"
+                      checked={prefs.sound_start}
+                      onChange={(e) => handlePrefsChange({ sound_start: e.target.checked })}
+                    />
+                    Start sound
+                  </label>
+                  <label className="toggle-label">
+                    <input
+                      type="checkbox"
+                      checked={prefs.sound_end}
+                      onChange={(e) => handlePrefsChange({ sound_end: e.target.checked })}
+                    />
+                    End sound
+                  </label>
+                  <label className="toggle-label">
+                    <input
+                      type="checkbox"
+                      checked={prefs.sound_tick}
+                      onChange={(e) => handlePrefsChange({ sound_tick: e.target.checked })}
+                    />
+                    Tick sound
+                  </label>
+                </div>
+              </div>
+
+              {saveError && <div className="error">{saveError}</div>}
+
+              <div className="settings-actions">
+                <button className="btn-primary" onClick={handleSavePrefs} disabled={saving}>
+                  {saving ? 'Saving…' : 'Save'}
+                </button>
+                <button className="btn-secondary" onClick={() => setSettingsOpen(false)}>
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* Settings panel */}
-        {settingsOpen && (
-          <div className="pomodoro-settings">
-            <h3 className="settings-title">Settings</h3>
-
-            <div className="settings-row">
-              <label className="settings-label">Duration</label>
-              <div className="preset-group">
-                {DURATION_PRESETS.map((d) => (
-                  <button
-                    key={d}
-                    className={`preset-btn${prefs.default_duration === d ? ' active' : ''}`}
-                    onClick={() => handlePrefsChange({ default_duration: d })}
-                  >
-                    {d}m
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="settings-row">
-              <label className="settings-label">Theme</label>
-              <div className="preset-group">
-                {THEME_OPTIONS.map((t) => (
-                  <button
-                    key={t}
-                    className={`preset-btn${prefs.theme === t ? ' active' : ''}`}
-                    onClick={() => handlePrefsChange({ theme: t })}
-                  >
-                    {t.charAt(0).toUpperCase() + t.slice(1)}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="settings-row">
-              <label className="settings-label">Sounds</label>
-              <div className="toggle-group">
-                <label className="toggle-label">
-                  <input
-                    type="checkbox"
-                    checked={prefs.sound_start}
-                    onChange={(e) => handlePrefsChange({ sound_start: e.target.checked })}
-                  />
-                  Start sound
-                </label>
-                <label className="toggle-label">
-                  <input
-                    type="checkbox"
-                    checked={prefs.sound_end}
-                    onChange={(e) => handlePrefsChange({ sound_end: e.target.checked })}
-                  />
-                  End sound
-                </label>
-                <label className="toggle-label">
-                  <input
-                    type="checkbox"
-                    checked={prefs.sound_tick}
-                    onChange={(e) => handlePrefsChange({ sound_tick: e.target.checked })}
-                  />
-                  Tick sound
-                </label>
-              </div>
-            </div>
-
-            {saveError && <div className="error">{saveError}</div>}
-
-            <div className="settings-actions">
-              <button className="btn-primary" onClick={handleSavePrefs} disabled={saving}>
-                {saving ? 'Saving…' : 'Save'}
-              </button>
-              <button className="btn-secondary" onClick={() => setSettingsOpen(false)}>
-                Cancel
-              </button>
-            </div>
-          </div>
-        )}
+        {/* Right-side panels */}
+        <div className="pomodoro-side-panels">
+          <GamificationPanel profile={profile} loading={profileLoading} error={profileError} />
+          <AchievementsPanel achievements={achievements} loading={achievementsLoading} error={achievementsError} />
+          <StatisticsPanel
+            weeklyStats={weeklyStats}
+            monthlyStats={monthlyStats}
+            loading={statsLoading}
+            error={statsError}
+          />
+        </div>
       </div>
     </div>
   );
