@@ -14,4 +14,32 @@ db.exec(`
   )
 `);
 
+db.exec(`
+  CREATE TABLE IF NOT EXISTS timer_sessions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    employee_id INTEGER NULL,
+    completed_at TEXT NOT NULL
+  )
+`);
+
+db.exec(`
+  CREATE TABLE IF NOT EXISTS timer_xp (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    employee_id INTEGER NULL UNIQUE,
+    total_xp INTEGER NOT NULL DEFAULT 0,
+    level INTEGER NOT NULL DEFAULT 1,
+    updated_at TEXT NOT NULL
+  )
+`);
+
+db.exec(`
+  CREATE TABLE IF NOT EXISTS timer_achievements (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    employee_id INTEGER NULL,
+    achievement_key TEXT NOT NULL,
+    unlocked_at TEXT NOT NULL,
+    UNIQUE(employee_id, achievement_key)
+  )
+`);
+
 module.exports = db;

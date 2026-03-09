@@ -3,6 +3,7 @@ const cors = require('cors');
 const path = require('path');
 const rateLimit = require('express-rate-limit');
 const employeeRoutes = require('./routes/employees');
+const timerRoutes = require('./routes/timer');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -19,6 +20,7 @@ app.use(express.json());
 app.use(apiLimiter);
 
 app.use('/api/employees', employeeRoutes);
+app.use('/api/timer', timerRoutes);
 
 // Serve React frontend in production
 const frontendBuild = path.join(__dirname, '..', 'frontend', 'build');

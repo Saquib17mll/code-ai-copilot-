@@ -182,6 +182,439 @@ body {
   color: #888;
 }
 
+/* ── Tab Navigation ─────────────────────────────────────────────────────── */
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.app-tabs {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.tab-btn {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.tab-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.tab-btn.active {
+  background: white;
+  color: #1976d2;
+  border-color: white;
+}
+
+/* ── Timer Dashboard ────────────────────────────────────────────────────── */
+
+.timer-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.timer-top {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+/* ── Profile Card ───────────────────────────────────────────────────────── */
+
+.profile-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  flex: 1;
+  min-width: 260px;
+}
+
+.profile-level-badge {
+  background: linear-gradient(135deg, #1976d2, #42a5f5);
+  border-radius: 50%;
+  width: 72px;
+  height: 72px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(25,118,210,0.4);
+}
+
+.level-number {
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.level-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  opacity: 0.9;
+}
+
+.profile-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.profile-stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-stat-value {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #1976d2;
+}
+
+.profile-stat-label {
+  font-size: 0.75rem;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.profile-xp-bar-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.profile-xp-bar {
+  height: 8px;
+  background: #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.profile-xp-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #1976d2, #42a5f5);
+  border-radius: 4px;
+  transition: width 0.5s ease;
+}
+
+.profile-xp-text {
+  font-size: 0.75rem;
+  color: #888;
+}
+
+/* ── Pomodoro Timer ─────────────────────────────────────────────────────── */
+
+.pomodoro-timer {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+  min-width: 220px;
+}
+
+.timer-ring-wrap {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.timer-ring {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.ring-bg {
+  fill: none;
+  stroke: #e0e0e0;
+  stroke-width: 8;
+}
+
+.ring-progress {
+  fill: none;
+  stroke: #1976d2;
+  stroke-width: 8;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1s linear;
+}
+
+.timer-display {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #333;
+  letter-spacing: 0.05em;
+  z-index: 1;
+}
+
+.timer-phase {
+  font-size: 0.85rem;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.timer-controls {
+  display: flex;
+  gap: 0.75rem;
+}
+
+/* ── Statistics Section ─────────────────────────────────────────────────── */
+
+.stats-section {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  padding: 1.5rem;
+}
+
+.stats-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.section-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.range-toggle {
+  display: flex;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.range-btn {
+  background: white;
+  border: none;
+  padding: 0.35rem 0.9rem;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: #555;
+  transition: background 0.15s;
+}
+
+.range-btn:hover {
+  background: #f5f5f5;
+}
+
+.range-btn.active {
+  background: #1976d2;
+  color: white;
+}
+
+.stats-cards {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.stat-card {
+  flex: 1;
+  min-width: 100px;
+  background: #f5f9ff;
+  border-radius: 8px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  border: 1px solid #e3f2fd;
+}
+
+.stat-icon {
+  font-size: 1.4rem;
+}
+
+.stat-num {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #1976d2;
+}
+
+.stat-desc {
+  font-size: 0.75rem;
+  color: #888;
+  text-align: center;
+}
+
+.chart-card {
+  background: #fafafa;
+  border-radius: 8px;
+  padding: 1rem;
+  border: 1px solid #e0e0e0;
+}
+
+.chart-title {
+  font-size: 0.85rem;
+  color: #555;
+  margin-bottom: 0.75rem;
+  font-weight: 500;
+}
+
+.bar-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 80px;
+}
+
+.bar-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.bar-fill {
+  width: 100%;
+  background: linear-gradient(180deg, #42a5f5, #1976d2);
+  border-radius: 3px 3px 0 0;
+  min-height: 2px;
+  transition: height 0.4s ease;
+}
+
+.bar-label {
+  font-size: 0.6rem;
+  color: #aaa;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  text-align: center;
+}
+
+/* ── Achievements ───────────────────────────────────────────────────────── */
+
+.achievements-section {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  padding: 1.5rem;
+}
+
+.achievements-section .section-title {
+  margin-bottom: 1rem;
+}
+
+.achievements-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0.75rem;
+}
+
+.achievement-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem;
+  border-radius: 8px;
+  border: 1px solid;
+}
+
+.achievement-card.unlocked {
+  background: #f0f7ff;
+  border-color: #90caf9;
+}
+
+.achievement-card.locked {
+  background: #fafafa;
+  border-color: #e0e0e0;
+  opacity: 0.6;
+}
+
+.achievement-icon {
+  font-size: 1.75rem;
+  flex-shrink: 0;
+}
+
+.achievement-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.achievement-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.achievement-desc {
+  font-size: 0.75rem;
+  color: #888;
+}
+
+.achievement-date {
+  font-size: 0.7rem;
+  color: #1976d2;
+  font-weight: 500;
+}
+
+/* ── Toast Notification ─────────────────────────────────────────────────── */
+
+.toast-notification {
+  position: fixed;
+  top: 1.5rem;
+  right: 1.5rem;
+  z-index: 2000;
+  background: #2e7d32;
+  color: white;
+  padding: 0.85rem 1.25rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  animation: slide-in 0.3s ease;
+  max-width: 340px;
+}
+
+@keyframes slide-in {
+  from { transform: translateX(120%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+
 /* Modal */
 .modal-overlay {
   position: fixed;
