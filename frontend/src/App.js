@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import EmployeeTable from './components/EmployeeTable';
 import EmployeeForm from './components/EmployeeForm';
 import DepartmentFilter from './components/DepartmentFilter';
+import PomodoroTimer from './components/PomodoroTimer';
 import { getEmployees, createEmployee, updateEmployee, deleteEmployee } from './api/employeeApi';
 import './App.css';
 
@@ -87,6 +88,7 @@ function App() {
         <h1>Employee Management System</h1>
       </header>
       <main className="app-main">
+        <PomodoroTimer />
         {error && <div className="alert-error">{error}</div>}
         <div className="toolbar">
           <DepartmentFilter

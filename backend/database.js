@@ -14,4 +14,15 @@ db.exec(`
   )
 `);
 
+db.exec(`
+  CREATE TABLE IF NOT EXISTS timer_sessions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    employee_id INTEGER NULL,
+    started_at TEXT NOT NULL,
+    ended_at TEXT NULL,
+    duration_minutes INTEGER NOT NULL,
+    status TEXT NOT NULL CHECK(status IN ('running', 'completed', 'cancelled'))
+  )
+`);
+
 module.exports = db;
