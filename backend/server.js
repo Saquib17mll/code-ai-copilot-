@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const rateLimit = require('express-rate-limit');
 const employeeRoutes = require('./routes/employees');
 
@@ -15,9 +16,16 @@ const apiLimiter = rateLimit({
 
 app.use(cors());
 app.use(express.json());
-app.use('/api/', apiLimiter);
+app.use(apiLimiter);
 
 app.use('/api/employees', employeeRoutes);
+
+// Serve React frontend in production
+const frontendBuild = path.join(__dirname, '..', 'frontend', 'build');
+app.use(express.static(frontendBuild));
+app.get('/{*path}', (req, res) => {
+  res.sendFile(path.join(frontendBuild, 'index.html'));
+});
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
